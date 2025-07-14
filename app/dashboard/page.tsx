@@ -1,26 +1,34 @@
-import { Button } from "@/components/ui/button";
-import { DollarSign, Plus, TrendingDown, TrendingUp } from "lucide-react";
+import { DollarSign, TrendingDown, TrendingUp } from "lucide-react";
 import React from "react";
 
+import { AddTransactionDialog } from "@/components/add-transaction-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import TransactionList from "@/components/transaction-list";
+import { preloadQuery } from "convex/nextjs";
+import { api } from "@/convex/_generated/api";
+import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const token = await convexAuthNextjsToken();
+  const preLoadedTransactions = await preloadQuery(
+    api.transactions.getTransactions,
+    {},
+    { token }
+  );
+
   return (
     <React.Fragment>
       <section className="flex w-full flex-row justify-between items-center">
         <h1 className="font-bold text-2xl tracking-tighter">Dashboard</h1>
-
-        <Button>
-          <Plus />
-          Add Transaction
-        </Button>
+        <AddTransactionDialog />
       </section>
 
       <SummaryCards />
 
       <section>
         <h2 className="font-bold text-2xl tracking-tighter">Transactions</h2>
+        <TransactionList transactions={preLoadedTransactions} />
       </section>
     </React.Fragment>
   );

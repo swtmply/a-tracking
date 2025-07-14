@@ -4,32 +4,36 @@ import { v } from "convex/values";
 
 const incomeTransaction = v.object({
   type: v.literal("income"),
-  name: v.string(),
   amount: v.number(),
   category: v.string(),
   description: v.string(),
   date: v.number(),
+
+  userId: v.id("users"),
 });
 
 const expenseTransaction = v.object({
   type: v.literal("expense"),
-  name: v.string(),
   amount: v.number(),
   category: v.string(),
   description: v.string(),
   date: v.number(),
+
+  userId: v.id("users"),
 });
 
 const savingsTransaction = v.object({
   type: v.literal("savings"),
-  name: v.string(),
   amount: v.number(),
   category: v.string(),
+  location: v.string(),
   description: v.string(),
   date: v.number(),
+
+  userId: v.id("users"),
 });
 
-const transaction = v.union(
+export const transactionSchema = v.union(
   incomeTransaction,
   expenseTransaction,
   savingsTransaction
@@ -43,5 +47,5 @@ export default defineSchema({
     email: v.string(),
     balance: v.number(),
   }).index("email", ["email"]),
-  transactions: defineTable(transaction),
+  transactions: defineTable(transactionSchema).index("userId", ["userId"]),
 });
