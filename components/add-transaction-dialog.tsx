@@ -47,12 +47,12 @@ import React from "react";
 
 const transactionSchema = z.object({
   type: z.enum(["income", "expense", "savings"]),
-  amount: z
+  amount: z.coerce
     .number({ error: "Amount should not be a negative number" })
     .min(1, "Amount must be greater than 0"),
   category: z.string().min(1, "Category is required"),
   description: z.string(),
-  date: z.number(),
+  date: z.date(),
   location: z.string(),
 });
 
@@ -76,6 +76,7 @@ const categories = {
     "groceries",
     "utilities",
     "entertainment",
+    "transportation",
     "others",
   ],
   savings: ["emergency", "investments", "retirement", "vacation"],
@@ -97,13 +98,13 @@ export function AddTransactionDialog() {
 
   const createTransaction = useMutation(api.transactions.addTransaction);
 
-  const form = useForm<Transaction>({
+  const form = useForm({
     defaultValues: {
       type: "income",
-      amount: 0,
+      amount: "",
       category: "",
       description: "",
-      date: Date.now(),
+      date: new Date(),
       location: "",
     },
     resolver: zodResolver(transactionSchema),
@@ -114,7 +115,10 @@ export function AddTransactionDialog() {
       let response;
       if (data.type === "savings") {
         response = await createTransaction({
-          data,
+          data: {
+            ...data,
+            date: data.date.getTime(),
+          },
         });
       } else {
         response = await createTransaction({
@@ -123,7 +127,7 @@ export function AddTransactionDialog() {
             amount: data.amount,
             category: data.category,
             description: data.description,
-            date: data.date,
+            date: data.date.getTime(),
           },
         });
       }
@@ -213,8 +217,12 @@ export function AddTransactionDialog() {
                       type="number"
                       placeholder="Amount"
                       {...field}
-                      value={field.value}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      value={field.value === "" ? "" : Number(field.value)}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value === "" ? "" : Number(e.target.value)
+                        )
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -354,7 +362,7 @@ function TransactionDatePicker() {
               <Calendar
                 mode="single"
                 selected={new Date(field.value)}
-                onSelect={field.onChange}
+                onSelect={(date) => field.onChange(date)}
                 disabled={(date) =>
                   date > new Date() || date < new Date("1900-01-01")
                 }
