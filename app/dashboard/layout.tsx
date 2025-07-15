@@ -14,7 +14,11 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 
-export default function Page({ children }: { children: React.ReactNode }) {
+export default async function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <SidebarProvider>
       <AppSidebar />
