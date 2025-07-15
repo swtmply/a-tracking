@@ -7,6 +7,7 @@ import { DollarSign, TrendingDown, TrendingUp } from "lucide-react";
 import { Preloaded } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { usePreloadedQuery } from "convex/react";
+import { Skeleton } from "./ui/skeleton";
 
 export default function SummaryCards({
   preloadedSummary,
@@ -71,7 +72,7 @@ export default function SummaryCards({
           <DollarSign
             className={cn(
               "h-4 w-4",
-              0 >= 0
+              summary?.data?.balance || 0 >= 0
                 ? "text-green-600 dark:text-green-500"
                 : "text-red-600 dark:text-red-500"
             )}
@@ -81,7 +82,7 @@ export default function SummaryCards({
           <div
             className={cn(
               `text-2xl font-bold`,
-              0 >= 0
+              summary?.data?.balance || 0 >= 0
                 ? "text-green-600 dark:text-green-500"
                 : "text-red-600 dark:text-red-500"
             )}
@@ -94,6 +95,25 @@ export default function SummaryCards({
           <p className="text-xs text-muted-foreground">This month</p>
         </CardContent>
       </Card>
+    </section>
+  );
+}
+
+export function SummaryCardsLoading() {
+  return (
+    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {Array.from({ length: 4 }).map((_, index) => (
+        <Card key={index} className="animate-pulse">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <Skeleton className="h-5 rounded w-16" />
+            <DollarSign className="h-4 w-4 text-gray-400" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-6 rounded w-24 mb-2" />
+            <Skeleton className="h-3 rounded w-32" />
+          </CardContent>
+        </Card>
+      ))}
     </section>
   );
 }

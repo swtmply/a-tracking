@@ -6,6 +6,7 @@ import { FunctionReturnType } from "convex/server";
 import { ArrowDownRight, ArrowUpRight, PiggyBank, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
+import { Skeleton } from "./ui/skeleton";
 
 type ArrayElementType<T> = T extends readonly (infer E)[] ? E : never;
 type Transaction = ArrayElementType<
@@ -111,5 +112,33 @@ function TransactionCard({ transaction }: { transaction: Transaction }) {
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+export function TransactionListLoading() {
+  return (
+    <div className="space-y-4">
+      {Array.from({ length: 5 }).map((_, index) => (
+        <Card key={index} className="py-2 animate-pulse">
+          <CardContent className="px-2">
+            <div className="flex items-center justify-between p-3 rounded-lg">
+              <div className="flex items-center space-x-3">
+                <Skeleton className="p-2 rounded-full w-8 h-8" />
+                <div>
+                  <Skeleton className="h-4 rounded w-24 mb-1" />
+                  <Skeleton className="h-3 rounded w-32" />
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Skeleton className="h-6 rounded w-20" />
+                <Button variant="ghost" size="icon" disabled>
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
   );
 }
