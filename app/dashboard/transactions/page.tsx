@@ -45,7 +45,7 @@ const getDates: (dateRange: string) => {
 export default async function TransactionsPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string };
+  searchParams: Promise<{ [key: string]: string }>;
 }) {
   const token = await convexAuthNextjsToken();
   const params = await searchParams;
