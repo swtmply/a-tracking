@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 
 import {
@@ -12,37 +14,24 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { GalleryVerticalEnd } from "lucide-react";
+import { PiggyBank } from "lucide-react";
 import LogoutButton from "./logout-button";
+import { usePathname } from "next/navigation";
 
 const data = {
   navMain: [
     {
-      title: "Getting Started",
-      url: "#",
-      items: [
-        {
-          title: "Overview",
-          url: "#",
-        },
-        {
-          title: "How To Guides",
-          url: "#",
-        },
-      ],
-    },
-    {
       title: "Tracking",
-      url: "#",
+      url: "/dashboard",
       items: [
         {
           title: "Dashboard",
-          url: "#",
+          url: "/dashboard",
           isActive: true,
         },
         {
           title: "Transactions",
-          url: "#",
+          url: "/dashboard/transactions",
         },
       ],
     },
@@ -50,6 +39,8 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const pathname = usePathname();
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -58,11 +49,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuButton size="lg" asChild>
               <a href="#">
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <GalleryVerticalEnd className="size-4" />
+                  <PiggyBank className="size-4" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-medium">A Tracking</span>
-                  <span className="">v1.0.0</span>
+                  <span className="text-muted-foreground text-sm">
+                    v0.0.1-alpha
+                  </span>
                 </div>
               </a>
             </SidebarMenuButton>
@@ -78,7 +71,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <SidebarMenu>
                 {item.items.map((item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={item.isActive}>
+                    <SidebarMenuButton asChild isActive={pathname === item.url}>
                       <a href={item.url}>{item.title}</a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

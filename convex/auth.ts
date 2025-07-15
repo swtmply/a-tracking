@@ -5,7 +5,11 @@ import { MutationCtx } from "./_generated/server";
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
   providers: [Google],
   callbacks: {
-    async createOrUpdateUser(ctx: MutationCtx, { profile }) {
+    async createOrUpdateUser(ctx: MutationCtx, { profile, existingUserId }) {
+      if (existingUserId) {
+        return existingUserId;
+      }
+
       const user = await ctx.db.insert("users", {
         balance: 0,
         name: profile.name as string,

@@ -79,7 +79,7 @@ const categories = {
     "transportation",
     "others",
   ],
-  savings: ["emergency", "investments", "retirement", "vacation"],
+  savings: ["emergency", "investments", "retirement", "vacation", "others"],
 };
 
 const locations = [

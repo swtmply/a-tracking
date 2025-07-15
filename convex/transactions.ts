@@ -34,8 +34,12 @@ export const transactionSchema = v.union(
 );
 
 export const getTransactions = query({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    types: v.optional(v.array(v.string())),
+    categories: v.optional(v.array(v.string())),
+    dates: v.optional(v.array(v.array(v.number()))),
+  },
+  handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
 
     if (!userId) {
@@ -51,7 +55,32 @@ export const getTransactions = query({
       .order("desc")
       .collect();
 
-    return transactions;
+    const filteredTransactions = transactions.filter((transaction) => {
+      if (args.types) {
+        const types = args.types.map((type) => {
+          if (type === "expenses") return "expense";
+          return type;
+        });
+        if (!types.includes(transaction.type)) {
+          return false;
+        }
+      }
+
+      if (args.categories && !args.categories.includes(transaction.category)) {
+        return false;
+      }
+
+      if (args.dates && args.dates.length > 0) {
+        const transactionDate = new Date(transaction.date).getTime();
+        return args.dates.some((date) => {
+          return transactionDate >= date[0] && transactionDate <= date[1];
+        });
+      }
+
+      return true;
+    });
+
+    return filteredTransactions;
   },
 });
 
